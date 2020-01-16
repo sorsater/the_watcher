@@ -23,6 +23,9 @@ class Pusher():
         self.API_TOKEN = credentials['API_TOKEN']
         self.USER_TOKEN = credentials['USER_TOKEN']
 
+        if self.API_TOKEN == 'API_TOKEN':
+            raise ValueError('You need to setup your own credentials in credentials.json')
+
     def push(self):
         print('Trying to push!')
         try:
@@ -59,7 +62,7 @@ class GoogleWatcher():
             for blocked in self.blocked_urls:
                 if blocked not in url:
                     print(url)
-                    matches.append(f'{cntr}: {url}')
+                    matches.append('{}: {}'.format(cntr, url))
                     cntr += 1
 
         self.msg += '\n'.join(matches) if matches else '&#x1f643;'
