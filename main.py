@@ -46,30 +46,39 @@ class Pusher():
 
 class GoogleWatcher():
     def __init__(self, name, search_string, **kwargs):
-        self.blocked_urls = ['seriousrelatedream']
+        self.ignore_urls_file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'ignore_urls.txt')
+
         self.search_string = search_string
         self.kwargs = kwargs
 
         self.msg = name + ': '
+        self.read_blocked_urls()
         self.search()
+    
+    def read_blocked_urls(self):
+        self.blocked_urls = open(self.ignore_urls_file_path).read().splitlines()
 
     def search(self):
-        matches = []
+        matches = ['Matches:']
         print(self.search_string)
         print(self.kwargs)
         cntr = 1
         for url in search(self.search_string, **self.kwargs):
+            valid = True
             for blocked in self.blocked_urls:
-                if blocked not in url:
-                    print(url)
-                    matches.append('{}: {}'.format(cntr, url))
-                    cntr += 1
+                if blocked in url:
+                    valid = False
+                    continue
+            if valid:
+                print(url)
+                matches.append('{}: {}'.format(cntr, url))
+                cntr += 1
 
         self.msg += '\n'.join(matches) if matches else '&#x1f643;'
 
 if __name__ == '__main__':
     apps = [
-        GoogleWatcher('cool', '"broder john" "cool" vinyl lp', stop=10, tbs='qdr:m', lang='sv'),
+        GoogleWatcher('cool', '"broder john" "cool" vinyl', stop=10, tbs='qdr:m', lang='sv'),
         #GoogleWatcher('ww3', 'world war 3 sweden', stop=10, tbs='qdr:m', lang='sv'),
     ]
 
